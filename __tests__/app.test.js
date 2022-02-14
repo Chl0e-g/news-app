@@ -8,22 +8,12 @@ afterAll(() => db.end());
 beforeEach(() => seed(data));
 
 describe("/api/topics", () => {
-  describe("Cross-method errors", () => {
-    test("status: 404 - msg 'Path not found' for invalid endpoint", () => {
-      return request(app)
-        .get("/api/invalid-path")
-        .expect(404)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("Path not found");
-        });
-    });
-  });
   describe("GET", () => {
     test("status: 200 - responds with an array of topic objects", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
-        .then(({ body: topics }) => {
+        .then(({ body: { topics } }) => {
           expect(Array.isArray(topics)).toBe(true);
           expect(topics).toHaveLength(3);
         });
@@ -32,7 +22,7 @@ describe("/api/topics", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
-        .then(({ body: topics }) => {
+        .then(({ body: { topics } }) => {
           topics.forEach((topic) => {
             expect(topic).toEqual(
               expect.objectContaining({
@@ -43,5 +33,63 @@ describe("/api/topics", () => {
           });
         });
     });
+  });
+});
+
+describe("/api/articles/:article_id", () => {
+  describe("GET", () => {
+    test("status: 200 - responds with a single article object with matching article_id", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(typeof article).toBe("object");
+          expect(article.article_id).toBe(1);
+        });
+    });
+    test("status: 200 - article object in response has these properties: author, title, article_id, body, topic, created_at, votes", () => {
+      const article1 = {
+        article_id: 1,
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: expect.any(String),
+        votes: 100,
+      };
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(article1);
+        });
+    });
+    test("status: 404 - msg 'Item ID not found' for valid but non-existent article_id", () => {
+      return request(app)
+        .get("/api/articles/999999")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Item ID not found");
+        });
+    });
+    test("status: 400 - msg 'Invalid item ID' for invalid article_id", () => {
+      return request(app)
+        .get("/api/articles/invalid_id")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid item ID");
+        });
+    });
+  });
+});
+
+describe("Invalid endpoint error", () => {
+  test("status: 404 - msg 'Path not found' for invalid endpoint", () => {
+    return request(app)
+      .get("/api/invalid-path")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Path not found");
+      });
   });
 });
