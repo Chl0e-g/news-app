@@ -9,13 +9,17 @@ exports.fetchArticleById = async (article_id) => {
     WHERE article_id = $1;`,
     [article_id]
   );
+
+  //error handling: no article found
   if (!article) {
     return Promise.reject({ status: 404, msg: "Item ID not found" });
   }
+  
   return article;
 };
 
 exports.updateArticleVotes = async (article_id, inc_votes) => {
+  //error handling: no inc_votes
   if (!inc_votes) {
     return Promise.reject({
       status: 400,
@@ -23,6 +27,7 @@ exports.updateArticleVotes = async (article_id, inc_votes) => {
     });
   }
 
+  //error handling: invalid inc_votes
   if (!Number.isInteger(inc_votes)) {
     return Promise.reject({
       status: 400,
@@ -40,5 +45,11 @@ exports.updateArticleVotes = async (article_id, inc_votes) => {
     RETURNING *;`,
     [article_id, inc_votes]
   );
+
+  //error handling: no article found
+  if (!updatedArticle) {
+    return Promise.reject({ status: 404, msg: "Item ID not found" });
+  }
+
   return updatedArticle;
 };

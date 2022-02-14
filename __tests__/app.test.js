@@ -159,15 +159,33 @@ describe("/api/articles/:article_id", () => {
           expect(msg).toBe("Missing inc_votes data in request body");
         });
     });
-    test("status: 400 - msg 'Invalid inc_votes data in request body' for request with invalid inc_votes data type", () =>{
-        return request(app)
+    test("status: 400 - msg 'Invalid inc_votes data in request body' for request with invalid inc_votes data type", () => {
+      return request(app)
         .patch("/api/articles/1")
-        .send({inc_votes: 'invalid data'})
+        .send({ inc_votes: "invalid data" })
         .expect(400)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Invalid inc_votes data in request body");
         });
-    })
+    });
+    test("status: 404 - msg 'Item ID not found' for valid but non-existent article_id", () => {
+      return request(app)
+        .patch("/api/articles/999999")
+        .send({ inc_votes: 10 })
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Item ID not found");
+        });
+    });
+    test("status: 400 - msg 'Invalid item ID' for invalid article_id", () => {
+      return request(app)
+        .patch("/api/articles/invalid_id")
+        .send({ inc_votes: 10 })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid item ID");
+        });
+    });
   });
 });
 
