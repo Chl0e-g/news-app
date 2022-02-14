@@ -36,14 +36,44 @@ describe("/api/topics", () => {
   });
 });
 
-
-describe("Invalid endpoint error", () => {
-    test("status: 404 - msg 'Path not found' for invalid endpoint", () => {
+describe("/api/articles/:article_id", () => {
+  describe("GET", () => {
+    test("status: 200 - responds with a single article object with matching article_id", () => {
       return request(app)
-        .get("/api/invalid-path")
-        .expect(404)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("Path not found");
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(typeof article).toBe("object");
+          expect(article.article_id).toBe(1);
+        });
+    });
+    test("status: 200 - article object in response has these properties: author, title, article_id, body, topic, created_at, votes", () => {
+      const article1 = {
+        article_id: 1,
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: expect.any(String),
+        votes: 100,
+      };
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(article1);
         });
     });
   });
+});
+
+describe("Invalid endpoint error", () => {
+  test("status: 404 - msg 'Path not found' for invalid endpoint", () => {
+    return request(app)
+      .get("/api/invalid-path")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Path not found");
+      });
+  });
+});
