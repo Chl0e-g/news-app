@@ -72,6 +72,14 @@ describe("/api/articles/:article_id", () => {
           expect(msg).toBe("Item ID not found");
         });
     });
+    test("status: 400 - msg 'Invalid item ID' for invalid article_id", () => {
+      return request(app)
+        .get("/api/articles/invalid_id")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid item ID");
+        });
+    });
   });
 });
 
