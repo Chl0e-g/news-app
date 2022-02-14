@@ -18,5 +18,20 @@ describe("/api/topics", () => {
           expect(topics).toHaveLength(3);
         });
     });
+    test("status: 200 - topic objects in response have 'slug' and 'description' properties with string values", () => {
+      return request(app)
+        .get("/api/topics")
+        .expect(200)
+        .then(({ body: topics }) => {
+          topics.forEach((topic) => {
+            expect(topic).toEqual(
+              expect.objectContaining({
+                slug: expect.any(String),
+                description: expect.any(String),
+              })
+            );
+          });
+        });
+    });
   });
 });
