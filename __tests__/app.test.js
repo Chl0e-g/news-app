@@ -64,6 +64,14 @@ describe("/api/articles/:article_id", () => {
           expect(article).toEqual(article1);
         });
     });
+    test("status: 404 - msg 'Item ID not found' for valid but non-existent article_id", () => {
+      return request(app)
+        .get("/api/articles/999999")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Item ID not found");
+        });
+    });
   });
 });
 

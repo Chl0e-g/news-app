@@ -3,7 +3,7 @@ const { getTopics } = require("./controllers/topics.controllers");
 const { getArticleById } = require("./controllers/articles.controllers")
 const {
   invalidPath,
-  serverError,
+  serverError, customErrors
 } = require("./error-handlers/app.error-handlers");
 
 const app = express();
@@ -12,8 +12,10 @@ app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticleById);
 
-app.all("/*", invalidPath);
 
+//error handlers
+app.all("/*", invalidPath);
+app.use(customErrors)
 app.use(serverError);
 
 module.exports = app;
