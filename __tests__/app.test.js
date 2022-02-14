@@ -23,7 +23,7 @@ describe("/api/topics", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
-        .then(({ body: topics }) => {
+        .then(({ body: { topics } }) => {
           expect(Array.isArray(topics)).toBe(true);
           expect(topics).toHaveLength(3);
         });
@@ -32,7 +32,7 @@ describe("/api/topics", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
-        .then(({ body: topics }) => {
+        .then(({ body: { topics } }) => {
           topics.forEach((topic) => {
             expect(topic).toEqual(
               expect.objectContaining({
