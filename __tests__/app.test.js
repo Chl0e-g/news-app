@@ -81,6 +81,54 @@ describe("/api/articles/:article_id", () => {
         });
     });
   });
+  describe("PATCH", () => {
+    test("status: 200 - increments votes for specified article in database by positive integer passed in request body", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: 10 })
+        .expect(200)
+        .then(() => {
+          return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(article.votes).toBe(110);
+            });
+        });
+    });
+    test("status: 200 - decrements votes for specified article in database by negative integer passed in request body", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: -10 })
+        .expect(200)
+        .then(() => {
+          return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(article.votes).toBe(90);
+            });
+        });
+    });
+    test("status: 200 - responds with a single object showing the updated article", () => {
+      const article1Updated = {
+        article_id: 1,
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: expect.any(String),
+        votes: 200,
+      };
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: 100 })
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(article1Updated);
+        });
+    });
+  });
 });
 
 describe("Invalid endpoint error", () => {
