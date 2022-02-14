@@ -33,5 +33,13 @@ describe("/api/topics", () => {
           });
         });
     });
+    test("status: 404 - msg 'Path not found' for invalid endpoint", () => {
+      return request(app)
+        .get("/api/invalid-path")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Path not found");
+        });
+    });
   });
 });
