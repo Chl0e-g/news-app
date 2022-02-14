@@ -150,6 +150,24 @@ describe("/api/articles/:article_id", () => {
           expect(article).toEqual(article1Updated);
         });
     });
+    test("status: 400 - msg 'Missing inc_votes data in request body' for request without inc_votes key in body", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Missing inc_votes data in request body");
+        });
+    });
+    test("status: 400 - msg 'Invalid inc_votes data in request body' for request with invalid inc_votes data type", () =>{
+        return request(app)
+        .patch("/api/articles/1")
+        .send({inc_votes: 'invalid data'})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid inc_votes data in request body");
+        });
+    })
   });
 });
 
