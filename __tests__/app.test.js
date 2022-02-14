@@ -128,6 +128,28 @@ describe("/api/articles/:article_id", () => {
           expect(article).toEqual(article1Updated);
         });
     });
+    test("status: 200 - additional data in request body is ignored", () => {
+      const article1Updated = {
+        article_id: 1,
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: expect.any(String),
+        votes: 200,
+      };
+      return request(app)
+        .patch("/api/articles/1")
+        .send({
+          inc_votes: 100,
+          superfluousData: "Test data",
+          article_id: "superfluous data",
+        })
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(article1Updated);
+        });
+    });
   });
 });
 
