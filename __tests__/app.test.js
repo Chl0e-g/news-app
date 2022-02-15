@@ -225,7 +225,7 @@ describe("/api/users", () => {
           });
         });
     });
-    test("status: 200 - user objects in response do not have any other properties from the users database", () => {
+    test("status: 200 - user objects in response do not contain any other properties from the users table in the database", () => {
       return request(app)
         .get("/api/users")
         .expect(200)
