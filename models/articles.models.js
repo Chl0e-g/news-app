@@ -58,6 +58,7 @@ exports.fetchArticles = async () => {
   const { rows: articles } = await db.query(`
   SELECT 
   author, title, article_id, topic, created_at, votes
-  FROM articles`);
+  FROM articles
+  ORDER BY created_at DESC`);
   return articles;
 };

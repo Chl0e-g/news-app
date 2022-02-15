@@ -240,6 +240,14 @@ describe("/api/articles", () => {
           });
         });
     });
+    test("status: 200 - article objects in response are sorted by created_at date in descending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
   });
 });
 
