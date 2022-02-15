@@ -268,7 +268,7 @@ describe("/api/articles", () => {
   });
 });
 
-describe.skip("/api/users", () => {
+describe("/api/users", () => {
   describe("GET", () => {
     test("status: 200 - responds with an array of user objects", () => {
       return request(app)
