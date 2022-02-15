@@ -200,7 +200,21 @@ describe("/api/articles/:article_id", () => {
   });
 });
 
-describe("/api/users", () => {
+describe("/api/articles", () => {
+    describe("GET", () => {
+      test("status: 200 - responds with an array of article objects", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(Array.isArray(articles)).toBe(true);
+            expect(articles).toHaveLength(12);
+          });
+      });
+    });
+  });
+
+describe.skip("/api/users", () => {
   describe("GET", () => {
     test("status: 200 - responds with an array of user objects", () => {
       return request(app)

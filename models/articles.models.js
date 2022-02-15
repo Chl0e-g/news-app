@@ -14,7 +14,7 @@ exports.fetchArticleById = async (articleId) => {
   if (!article) {
     return Promise.reject({ status: 404, msg: "Item ID not found" });
   }
-  
+
   return article;
 };
 
@@ -52,4 +52,9 @@ exports.updateArticleVotes = async (articleId, incVotes) => {
   }
 
   return updatedArticle;
+};
+
+exports.fetchArticles = async () => {
+  const { rows: articles } = await db.query(`SELECT * FROM articles`);
+  return articles;
 };
