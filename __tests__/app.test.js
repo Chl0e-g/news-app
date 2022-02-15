@@ -67,6 +67,7 @@ describe("/api/articles/:article_id", () => {
         body: "I find this existence challenging",
         created_at: expect.any(String),
         votes: 100,
+        comment_count: 11
       };
       return request(app)
         .get("/api/articles/1")
@@ -75,6 +76,22 @@ describe("/api/articles/:article_id", () => {
           expect(article).toEqual(article1);
         });
     });
+    test("status: 200 - article object in response has comment_count property equal to the number of comments associated with that article_id", () => {
+          return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(article.comment_count).toBe(11);
+            });
+    })
+    test("status: 200 - comment_count property is equal to zero if no comments are associated with that article_id", () => {
+        return request(app)
+          .get("/api/articles/2")
+          .expect(200)
+          .then(({ body: { article } }) => {
+            expect(article.comment_count).toBe(0);
+          });
+  })
     test("status: 404 - msg 'Item ID not found' for valid but non-existent article_id", () => {
       return request(app)
         .get("/api/articles/999999")
