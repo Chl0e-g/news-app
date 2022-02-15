@@ -1,13 +1,13 @@
 const db = require("../db/connection");
 
-exports.fetchArticleById = async (article_id) => {
+exports.fetchArticleById = async (articleId) => {
   const {
     rows: [article],
   } = await db.query(
     `
     SELECT * FROM articles
     WHERE article_id = $1;`,
-    [article_id]
+    [articleId]
   );
 
   //error handling: no article found
@@ -18,17 +18,17 @@ exports.fetchArticleById = async (article_id) => {
   return article;
 };
 
-exports.updateArticleVotes = async (article_id, inc_votes) => {
-  //error handling: no inc_votes
-  if (!inc_votes) {
+exports.updateArticleVotes = async (articleId, incVotes) => {
+  //error handling: no incVotes
+  if (!incVotes) {
     return Promise.reject({
       status: 400,
       msg: "Missing inc_votes data in request body",
     });
   }
 
-  //error handling: invalid inc_votes
-  if (!Number.isInteger(inc_votes)) {
+  //error handling: invalid incVotes
+  if (!Number.isInteger(incVotes)) {
     return Promise.reject({
       status: 400,
       msg: "Invalid inc_votes data in request body",
@@ -43,7 +43,7 @@ exports.updateArticleVotes = async (article_id, inc_votes) => {
     SET votes = votes + $2
     WHERE article_id = $1
     RETURNING *;`,
-    [article_id, inc_votes]
+    [articleId, incVotes]
   );
 
   //error handling: no article found
