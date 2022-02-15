@@ -200,7 +200,58 @@ describe("/api/articles/:article_id", () => {
   });
 });
 
-describe("/api/users", () => {
+describe("/api/articles", () => {
+  describe("GET", () => {
+    test("status: 200 - responds with an array of article objects", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(Array.isArray(articles)).toBe(true);
+          expect(articles).toHaveLength(12);
+        });
+    });
+    test("status: 200 - article objects in response have these properties: author, title, article_id, topic, created_at, votes", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+              })
+            );
+          });
+        });
+    });
+    test("status: 200 - article objects in response do not have a body property (this exists in the articles table in the database)", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          articles.forEach((article) => {
+            expect(article).not.toHaveProperty("body");
+          });
+        });
+    });
+    test("status: 200 - article objects in response are sorted by created_at date in descending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+  });
+});
+
+describe.skip("/api/users", () => {
   describe("GET", () => {
     test("status: 200 - responds with an array of user objects", () => {
       return request(app)
