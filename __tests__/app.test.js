@@ -279,5 +279,30 @@ describe.skip("/api/users", () => {
           expect(users).toHaveLength(4);
         });
     });
+    test("status: 200 - user objects in response have 'username' property with string value", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body: { users } }) => {
+          users.forEach((user) => {
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("status: 200 - user objects in response do not contain any other properties from the users table in the database", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body: { users } }) => {
+          users.forEach((user) => {
+            expect(user).not.toHaveProperty("name");
+            expect(user).not.toHaveProperty("avatar_url");
+          });
+        });
+    });
   });
 });
