@@ -230,6 +230,16 @@ describe("/api/articles", () => {
           });
         });
     });
+    test("status: 200 - article objects in response do not have a body property (this exists in the articles table in the database)", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          articles.forEach((article) => {
+            expect(article).not.toHaveProperty("body");
+          });
+        });
+    });
   });
 });
 

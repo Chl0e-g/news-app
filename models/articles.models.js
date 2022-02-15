@@ -55,6 +55,9 @@ exports.updateArticleVotes = async (articleId, incVotes) => {
 };
 
 exports.fetchArticles = async () => {
-  const { rows: articles } = await db.query(`SELECT * FROM articles`);
+  const { rows: articles } = await db.query(`
+  SELECT 
+  author, title, article_id, topic, created_at, votes
+  FROM articles`);
   return articles;
 };
