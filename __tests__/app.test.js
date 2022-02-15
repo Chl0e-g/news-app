@@ -7,8 +7,19 @@ const db = require("../db/connection");
 afterAll(() => db.end());
 beforeEach(() => seed(data));
 
+describe("Invalid endpoint error", () => {
+  test("status: 404 - msg 'Path not found' for invalid endpoint", () => {
+    return request(app)
+      .get("/api/invalid-path")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Path not found");
+      });
+  });
+});
+
 describe("/api/topics", () => {
-  describe("GET", () => {
+    describe("GET", () => {
     test("status: 200 - responds with an array of topic objects", () => {
       return request(app)
         .get("/api/topics")
@@ -189,13 +200,3 @@ describe("/api/articles/:article_id", () => {
   });
 });
 
-describe("Invalid endpoint error", () => {
-  test("status: 404 - msg 'Path not found' for invalid endpoint", () => {
-    return request(app)
-      .get("/api/invalid-path")
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Path not found");
-      });
-  });
-});
