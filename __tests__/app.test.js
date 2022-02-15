@@ -201,18 +201,37 @@ describe("/api/articles/:article_id", () => {
 });
 
 describe("/api/articles", () => {
-    describe("GET", () => {
-      test("status: 200 - responds with an array of article objects", () => {
-        return request(app)
-          .get("/api/articles")
-          .expect(200)
-          .then(({ body: { articles } }) => {
-            expect(Array.isArray(articles)).toBe(true);
-            expect(articles).toHaveLength(12);
+  describe("GET", () => {
+    test("status: 200 - responds with an array of article objects", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(Array.isArray(articles)).toBe(true);
+          expect(articles).toHaveLength(12);
+        });
+    });
+    test("status: 200 - article objects in response have these properties: author, title, article_id, topic, created_at, votes", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+              })
+            );
           });
-      });
+        });
     });
   });
+});
 
 describe.skip("/api/users", () => {
   describe("GET", () => {
