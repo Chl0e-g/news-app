@@ -19,7 +19,7 @@ describe("Invalid endpoint error", () => {
 });
 
 describe("/api/topics", () => {
-    describe("GET", () => {
+  describe("GET", () => {
     test("status: 200 - responds with an array of topic objects", () => {
       return request(app)
         .get("/api/topics")
@@ -200,3 +200,16 @@ describe("/api/articles/:article_id", () => {
   });
 });
 
+describe("/api/users", () => {
+  describe("GET", () => {
+    test("status: 200 - responds with an array of user objects", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body: { users } }) => {
+          expect(Array.isArray(users)).toBe(true);
+          expect(users).toHaveLength(4);
+        });
+    });
+  });
+});
