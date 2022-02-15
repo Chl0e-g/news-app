@@ -58,7 +58,7 @@ describe("/api/articles/:article_id", () => {
           expect(article.article_id).toBe(1);
         });
     });
-    test("status: 200 - article object in response has these properties: author, title, article_id, body, topic, created_at, votes", () => {
+    test("status: 200 - article object in response has these properties: author, title, article_id, body, topic, created_at, votes, comment_count", () => {
       const article1 = {
         article_id: 1,
         title: "Living in the shadow of a great man",
@@ -67,6 +67,7 @@ describe("/api/articles/:article_id", () => {
         body: "I find this existence challenging",
         created_at: expect.any(String),
         votes: 100,
+        comment_count: 11
       };
       return request(app)
         .get("/api/articles/1")
