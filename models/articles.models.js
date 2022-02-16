@@ -1,36 +1,20 @@
 const db = require("../db/connection");
 
 exports.fetchArticleById = async (articleId) => {
-  const articleData = db.query(
+  const {rows: [article]} = await db.query(
     `
-    SELECT * FROM articles
-    WHERE articles.article_id = $1;`,
+    SELECT articles.*, COUNT(comments.comment_id)::int AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id;`,
     [articleId]
   );
-  const commentCount = db.query(
-    `
-  SELECT COUNT(*)::int AS comment_count 
-  FROM comments
-  WHERE comments.article_id = $1;`,
-    [articleId]
-  );
-
-  const [
-    {
-      rows: [article],
-    },
-    {
-      rows: [{ comment_count }],
-    },
-  ] = await Promise.all([articleData, commentCount]);
 
   //error handling: no article found
   if (!article) {
     return Promise.reject({ status: 404, msg: "Article ID not found" });
   }
-
-  //adding comment_count to article object
-  article.comment_count = comment_count;
 
   return article;
 };
