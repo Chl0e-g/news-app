@@ -12,6 +12,6 @@ exports.checkArticleExists = async (articleId) => {
     [articleId]
   );
   if (!exists) {
-    return Promise.reject({ status: 404, msg: "Item ID not found" });
+    return Promise.reject({ status: 404, msg: "Article ID not found" });
   }
 };
