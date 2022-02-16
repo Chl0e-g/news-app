@@ -344,5 +344,13 @@ describe("/api/articles/:article_id/comments", () => {
           expect(comments).toEqual([]);
         });
     });
+    test("status: 404 - msg 'Item ID not found' for valid but non-existent article_id", () => {
+      return request(app)
+        .get("/api/articles/9999/comments")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Item ID not found");
+        });
+    });
   });
 });
