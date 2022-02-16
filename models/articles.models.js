@@ -26,7 +26,7 @@ exports.fetchArticleById = async (articleId) => {
 
   //error handling: no article found
   if (!article) {
-    return Promise.reject({ status: 404, msg: "Item ID not found" });
+    return Promise.reject({ status: 404, msg: "Article ID not found" });
   }
 
   //adding comment_count to article object
@@ -65,7 +65,7 @@ exports.updateArticleVotes = async (articleId, incVotes) => {
 
   //error handling: no article found
   if (!updatedArticle) {
-    return Promise.reject({ status: 404, msg: "Item ID not found" });
+    return Promise.reject({ status: 404, msg: "Article ID not found" });
   }
 
   return updatedArticle;

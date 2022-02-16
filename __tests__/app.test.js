@@ -92,20 +92,20 @@ describe("/api/articles/:article_id", () => {
           expect(article.comment_count).toBe(0);
         });
     });
-    test("status: 404 - msg 'Item ID not found' for valid but non-existent article_id", () => {
+    test("status: 404 - msg 'Article ID not found' for valid but non-existent article_id", () => {
       return request(app)
         .get("/api/articles/999999")
         .expect(404)
         .then(({ body: { msg } }) => {
-          expect(msg).toBe("Item ID not found");
+          expect(msg).toBe("Article ID not found");
         });
     });
-    test("status: 400 - msg 'Invalid item ID' for invalid article_id", () => {
+    test("status: 400 - msg 'Invalid article ID' for invalid article_id", () => {
       return request(app)
         .get("/api/articles/invalid_id")
         .expect(400)
         .then(({ body: { msg } }) => {
-          expect(msg).toBe("Invalid item ID");
+          expect(msg).toBe("Invalid article ID");
         });
     });
   });
@@ -196,22 +196,22 @@ describe("/api/articles/:article_id", () => {
           expect(msg).toBe("Invalid inc_votes data in request body");
         });
     });
-    test("status: 404 - msg 'Item ID not found' for valid but non-existent article_id", () => {
+    test("status: 404 - msg 'Article ID not found' for valid but non-existent article_id", () => {
       return request(app)
         .patch("/api/articles/999999")
         .send({ inc_votes: 10 })
         .expect(404)
         .then(({ body: { msg } }) => {
-          expect(msg).toBe("Item ID not found");
+          expect(msg).toBe("Article ID not found");
         });
     });
-    test("status: 400 - msg 'Invalid item ID' for invalid article_id", () => {
+    test("status: 400 - msg 'Invalid article ID' for invalid article_id", () => {
       return request(app)
         .patch("/api/articles/invalid_id")
         .send({ inc_votes: 10 })
         .expect(400)
         .then(({ body: { msg } }) => {
-          expect(msg).toBe("Invalid item ID");
+          expect(msg).toBe("Invalid article ID");
         });
     });
   });
@@ -322,6 +322,62 @@ describe("/api/users", () => {
             expect(user).not.toHaveProperty("name");
             expect(user).not.toHaveProperty("avatar_url");
           });
+        });
+    });
+  });
+});
+
+describe("/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
+    test("status: 200 - responds with an array of comment objects for the specified article_id", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(Array.isArray(comments)).toBe(true);
+          expect(comments).toHaveLength(11);
+        });
+    });
+    test("status: 200 - comment objects in response have these properties: comment_id, votes, created_at, author, body", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("status: 200 - responds with empty array for article with no comments", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments).toEqual([]);
+        });
+    });
+    test("status: 404 - msg 'Article ID not found' for valid but non-existent article_id", () => {
+      return request(app)
+        .get("/api/articles/9999/comments")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Article ID not found");
+        });
+    });
+    test("status: 400 - msg 'Invalid article ID' for invalid article_id", () => {
+      return request(app)
+        .get("/api/articles/invalid_id/comments")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid article ID");
         });
     });
   });
