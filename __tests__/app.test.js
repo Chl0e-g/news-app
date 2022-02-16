@@ -258,6 +258,12 @@ describe("/api/articles", () => {
                 comment_count: expect.any(Number),
               })
             );
+            if (article.article_id === 1) {
+              expect(article.comment_count).toBe(11);
+            }
+            if (article.article_id === 2) {
+              expect(article.comment_count).toBe(0);
+            }
           });
         });
     });
