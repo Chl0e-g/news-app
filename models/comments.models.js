@@ -7,5 +7,6 @@ exports.fetchCommentsByArticleId = async (articleId) => {
     WHERE article_id = $1;`,
     [articleId]
   );
+  console.log(comments)
   return comments;
 };
