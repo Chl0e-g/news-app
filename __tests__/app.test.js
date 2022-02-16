@@ -247,6 +247,26 @@ describe("/api/articles", () => {
           });
         });
     });
+    test("status: 200 - article objects in response have comment_count property equal to the number of comments associated with that article_id", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                comment_count: expect.any(Number),
+              })
+            );
+            if (article.article_id === 1) {
+              expect(article.comment_count).toBe(11);
+            }
+            if (article.article_id === 2) {
+              expect(article.comment_count).toBe(0);
+            }
+          });
+        });
+    });
     test("status: 200 - article objects in response do not have a body property (this exists in the articles table in the database)", () => {
       return request(app)
         .get("/api/articles")
