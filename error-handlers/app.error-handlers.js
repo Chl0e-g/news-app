@@ -9,7 +9,7 @@ exports.customErrors = (err, req, res, next) => {
 
 exports.invalidItemId = (err, req, res, next) => {
   if (err.code === "22P02") {
-    return res.status(400).send({ msg: "Invalid item ID" });
+    return res.status(400).send({ msg: "Invalid article ID" });
   }
   next(err);
 };
