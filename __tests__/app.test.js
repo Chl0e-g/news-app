@@ -116,12 +116,10 @@ describe("/api/articles/:article_id", () => {
         .send({ inc_votes: 10 })
         .expect(200)
         .then(() => {
-          return request(app)
-            .get("/api/articles/1")
-            .expect(200)
-            .then(({ body: { article } }) => {
-              expect(article.votes).toBe(110);
-            });
+          return request(app).get("/api/articles/1").expect(200);
+        })
+        .then(({ body: { article } }) => {
+          expect(article.votes).toBe(110);
         });
     });
     test("status: 200 - decrements votes for specified article in database by negative integer passed in request body", () => {
@@ -130,12 +128,10 @@ describe("/api/articles/:article_id", () => {
         .send({ inc_votes: -10 })
         .expect(200)
         .then(() => {
-          return request(app)
-            .get("/api/articles/1")
-            .expect(200)
-            .then(({ body: { article } }) => {
-              expect(article.votes).toBe(90);
-            });
+          return request(app).get("/api/articles/1").expect(200);
+        })
+        .then(({ body: { article } }) => {
+          expect(article.votes).toBe(90);
         });
     });
     test("status: 200 - responds with a single object showing the updated article", () => {
