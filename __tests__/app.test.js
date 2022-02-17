@@ -273,12 +273,103 @@ describe("/api/articles", () => {
           });
         });
     });
-    test("status: 200 - article objects in response are sorted by created_at date in descending order", () => {
+    test("status: 200 - article objects in response are sorted by created_at date in descending order by default", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then(({ body: { articles } }) => {
           expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    test("status: 200 - article objects in response are sorted by column specified in optional sort_by query - default order desc", () => {
+      //valid sort_by options: author, title, article_id, topic, created_at, votes
+      return request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("author", { descending: true });
+          return request(app).get("/api/articles?sort_by=title").expect(200);
+        })
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("title", { descending: true });
+          return request(app)
+            .get("/api/articles?sort_by=article_id")
+            .expect(200);
+        })
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("article_id", { descending: true });
+          return request(app).get("/api/articles?sort_by=topic").expect(200);
+        })
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("topic", { descending: true });
+          return request(app)
+            .get("/api/articles?sort_by=created_at")
+            .expect(200);
+        })
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+          return request(app).get("/api/articles?sort_by=votes").expect(200);
+        })
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("votes", { descending: true });
+        });
+    });
+    test("status: 400 - msg 'Invalid sort_by query' for invalid sort_by column in query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=invalid-sort-query")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid sort_by query");
+        });
+    });
+    test("status: 200 - article objects in response are sorted in order specified by optional order query", () => {
+      //valid order options: asc, desc
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", { ascending: true });
+        });
+    });
+    test("status: 400 - msg 'Invalid order query' for invalid order in query", () => {
+      return request(app)
+        .get("/api/articles?order=invalid-order_query")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid order query");
+        });
+    });
+    test("status: 200 - article objects in response are filtered by topic specified in optional topic query", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toHaveLength(1);
+        });
+    });
+    test("status: 200 - responds with empty articles array for a valid topic query with zero associated articles", () => {
+      return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toHaveLength(0);
+        });
+    });
+    test("status: 404 - msg 'Topic not found' for topic query that does not exist in database", () => {
+      return request(app)
+        .get("/api/articles?topic=non-existent-topic")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Topic not found");
+        });
+    });
+    test("status: 200 - response is correct for multiple valid queries at once", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title&order=asc&topic=mitch")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toHaveLength(11);
+          expect(articles).toBeSortedBy("title", { ascending: true });
         });
     });
   });

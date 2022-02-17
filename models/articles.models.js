@@ -1,7 +1,9 @@
 const db = require("../db/connection");
 
 exports.fetchArticleById = async (articleId) => {
-  const {rows: [article]} = await db.query(
+  const {
+    rows: [article],
+  } = await db.query(
     `
     SELECT articles.*, COUNT(comments.comment_id)::int AS comment_count
     FROM articles
@@ -55,13 +57,48 @@ exports.updateArticleVotes = async (articleId, incVotes) => {
   return updatedArticle;
 };
 
-exports.fetchArticles = async () => {
-  const { rows: articles } = await db.query(`
+exports.fetchArticles = async (
+  sortBy = "created_at",
+  order = "desc",
+  topic
+) => {
+  //error handling: invalid sortBy query
+  const validSortByColumns = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+  ];
+  if (!validSortByColumns.includes(sortBy)) {
+    return Promise.reject({ status: 400, msg: "Invalid sort_by query" });
+  }
+
+  //error handling: invalid order query
+  const validOrders = ["asc", "desc"];
+  if (!validOrders.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid order query" });
+  }
+
+  //optional topic filtering
+  const queryValues = [];
+  let topicFilterQuery = "";
+  if (topic) {
+    topicFilterQuery = "WHERE topic = $1";
+    queryValues.push(topic);
+  }
+
+  const { rows: articles } = await db.query(
+    `
   SELECT 
   articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, COUNT(comments.comment_id)::int AS comment_count
   FROM articles
   LEFT JOIN comments ON articles.article_id = comments.article_id
+  ${topicFilterQuery}
   GROUP BY articles.article_id
-  ORDER BY created_at DESC;`);
+  ORDER BY ${sortBy} ${order};`,
+    queryValues
+  );
   return articles;
 };

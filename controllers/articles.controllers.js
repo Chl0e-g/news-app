@@ -1,8 +1,9 @@
 const {
   fetchArticleById,
   updateArticleVotes,
-  fetchArticles
+  fetchArticles,
 } = require("../models/articles.models");
+const { checkTopicExists } = require("../models/utils.models");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id: articleId } = req.params;
@@ -28,8 +29,10 @@ exports.patchArticleVotes = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles()
-    .then((articles) => {
+  const { sort_by: sortBy, order, topic } = req.query;
+  
+  Promise.all([fetchArticles(sortBy, order, topic), checkTopicExists(topic)])
+    .then(([articles]) => {
       res.status(200).send({ articles });
     })
     .catch((err) => {
