@@ -339,6 +339,14 @@ describe("/api/articles", () => {
           expect(msg).toBe("Invalid order query");
         });
     });
+    test("status: 200 - article objects in response are filtered by valid topic specified in optional topic query", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toHaveLength(1);
+        });
+    });
   });
 });
 
