@@ -116,12 +116,10 @@ describe("/api/articles/:article_id", () => {
         .send({ inc_votes: 10 })
         .expect(200)
         .then(() => {
-          return request(app)
-            .get("/api/articles/1")
-            .expect(200)
-            .then(({ body: { article } }) => {
-              expect(article.votes).toBe(110);
-            });
+          return request(app).get("/api/articles/1").expect(200);
+        })
+        .then(({ body: { article } }) => {
+          expect(article.votes).toBe(110);
         });
     });
     test("status: 200 - decrements votes for specified article in database by negative integer passed in request body", () => {
@@ -130,12 +128,10 @@ describe("/api/articles/:article_id", () => {
         .send({ inc_votes: -10 })
         .expect(200)
         .then(() => {
-          return request(app)
-            .get("/api/articles/1")
-            .expect(200)
-            .then(({ body: { article } }) => {
-              expect(article.votes).toBe(90);
-            });
+          return request(app).get("/api/articles/1").expect(200);
+        })
+        .then(({ body: { article } }) => {
+          expect(article.votes).toBe(90);
         });
     });
     test("status: 200 - responds with a single object showing the updated article", () => {
@@ -378,6 +374,7 @@ describe("/api/articles/:article_id/comments", () => {
           comments.forEach((comment) => {
             expect(comment).toEqual(
               expect.objectContaining({
+                article_id: expect.any(Number),
                 comment_id: expect.any(Number),
                 votes: expect.any(Number),
                 created_at: expect.any(String),
@@ -407,6 +404,122 @@ describe("/api/articles/:article_id/comments", () => {
     test("status: 400 - msg 'Invalid article ID' for invalid article_id", () => {
       return request(app)
         .get("/api/articles/invalid_id/comments")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid article ID");
+        });
+    });
+  });
+  describe("POST", () => {
+    test("status: 200 - adds comment passed in request body to database for specified article_id", () => {
+      const reqBody = { username: "butter_bridge", body: "test body" };
+      const commentInDb = {
+        article_id: 2,
+        comment_id: 19,
+        votes: 0,
+        created_at: expect.any(String),
+        author: "butter_bridge",
+        body: "test body",
+      };
+
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(reqBody)
+        .expect(200)
+        .then(() => {
+          return request(app).get("/api/articles/2/comments").expect(200);
+        })
+        .then(
+          ({
+            body: {
+              comments: [comment],
+            },
+          }) => {
+            expect(comment).toEqual(commentInDb);
+          }
+        );
+    });
+    test("status: 200 - responds with a single object showing the posted comment", () => {
+      const reqBody = { username: "butter_bridge", body: "test body" };
+      const newComment = {
+        article_id: 2,
+        comment_id: 19,
+        votes: 0,
+        created_at: expect.any(String),
+        author: "butter_bridge",
+        body: "test body",
+      };
+
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(reqBody)
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(newComment);
+        });
+    });
+    test("status: 200 - additional data in request body is ignored", () => {
+      const reqBody = {
+        username: "butter_bridge",
+        body: "test body",
+        article_id: "superfluous data",
+        created_at: "superfluous data",
+        votes: 1000000,
+      };
+      const newComment = {
+        article_id: 2,
+        comment_id: 19,
+        votes: 0,
+        created_at: expect.any(String),
+        author: "butter_bridge",
+        body: "test body",
+      };
+
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(reqBody)
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(newComment);
+        });
+    });
+    test("status: 400 - msg 'Missing data in request body' for request without 'body' and/or 'username' keys in body", () => {
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Missing data in request body");
+        });
+    });
+    test("status: 404 - msg 'Username not found' for request with username not in database", () => {
+      const reqBody = { username: "non-existent user", body: "test body" };
+
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(reqBody)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Username not found");
+        });
+    });
+    test("status: 404 - msg 'Article ID not found' for valid but non-existent article_id", () => {
+      const reqBody = { username: "butter_bridge", body: "test body" };
+
+      return request(app)
+        .post("/api/articles/9999/comments")
+        .send(reqBody)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toEqual("Article ID not found");
+        });
+    });
+    test("status: 400 - msg 'Invalid article ID' for invalid article_id", () => {
+      const reqBody = { username: "butter_bridge", body: "test body" };
+
+      return request(app)
+        .post("/api/articles/invalid_id/comments")
+        .send(reqBody)
         .expect(400)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Invalid article ID");
