@@ -349,12 +349,20 @@ describe("/api/articles", () => {
     });
     test("status: 200 - responds with empty articles array for a valid topic query with zero associated articles", () => {
       return request(app)
-      .get("/api/articles?topic=paper")
-      .expect(200)
-      .then(({body: {articles}})=>{
-        expect(articles).toHaveLength(0)
-      })
-    })
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toHaveLength(0);
+        });
+    });
+    test("status: 404 - msg 'Topic not found' for topic query that does not exist in database", () => {
+      return request(app)
+        .get("/api/articles?topic=non-existent-topic")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Topic not found");
+        });
+    });
   });
 });
 
