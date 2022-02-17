@@ -58,6 +58,19 @@ exports.updateArticleVotes = async (articleId, incVotes) => {
 };
 
 exports.fetchArticles = async (sortBy = "created_at", order = "desc") => {
+  //error handling: invalid sortBy query
+  const validSortByColumns = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+  ];
+  if (!validSortByColumns.includes(sortBy)) {
+    return Promise.reject({ status: 400, msg: "Invalid sort_by query" });
+  }
+
   const { rows: articles } = await db.query(`
   SELECT 
   articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, COUNT(comments.comment_id)::int AS comment_count

@@ -316,12 +316,12 @@ describe("/api/articles", () => {
     });
     test("status: 400 - msg 'Invalid sort_by query' for invalid sort_by column in query", () => {
       return request(app)
-      .get("/api/articles?sort_by=invalid-sort-query")
-      .expect(400)
-      .then(({body: {msg}})=>{
-        expect(msg).toBe("Invalid sort_by query")
-      })
-    })
+        .get("/api/articles?sort_by=invalid-sort-query")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid sort_by query");
+        });
+    });
     test("status: 200 - article objects in response have sort order specified by optional order query - default order desc", () => {
       //valid order options: asc, desc
       return request(app)
