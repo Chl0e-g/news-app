@@ -63,5 +63,6 @@ exports.fetchArticles = async () => {
   LEFT JOIN comments ON articles.article_id = comments.article_id
   GROUP BY articles.article_id
   ORDER BY created_at DESC;`);
+  console.log(articles)
   return articles;
 };
