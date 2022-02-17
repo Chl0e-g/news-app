@@ -586,3 +586,22 @@ describe("/api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    test("status: 204 - specified comment is deleted from database", () => {
+      return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(()=>{
+        //test article that comment 1 belongs to has one fewer comment:
+        return request(app)
+        .get("/api/articles/9")
+        .expect(200)
+      })
+      .then(({body: {article}})=>{
+        expect(article.comment_count).toBe(1)
+      })
+    })
+  });
+});

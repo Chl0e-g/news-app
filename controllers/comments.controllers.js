@@ -1,6 +1,7 @@
 const {
   fetchCommentsByArticleId,
   insertComment,
+  removeComment,
 } = require("../models/comments.models");
 const { checkArticleExists } = require("../models/utils.models");
 
@@ -25,6 +26,18 @@ exports.postComment = (req, res, next) => {
   insertComment(articleId, author, body)
     .then((comment) => {
       res.status(200).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id: commentId } = req.params;
+
+  removeComment(commentId)
+    .then(() => {
+      res.status(204).send();
     })
     .catch((err) => {
       next(err);

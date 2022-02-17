@@ -23,3 +23,13 @@ exports.insertComment = async (articleId, author, body) => {
   );
   return comment;
 };
+
+exports.removeComment = async (commentId) => {
+  await db.query(
+    `
+  DELETE FROM comments
+  WHERE comment_id = $1;`,
+    [commentId]
+  );
+  return;
+};
