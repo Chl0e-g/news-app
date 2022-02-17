@@ -71,6 +71,12 @@ exports.fetchArticles = async (sortBy = "created_at", order = "desc") => {
     return Promise.reject({ status: 400, msg: "Invalid sort_by query" });
   }
 
+  //error handling: invalid order query
+  const validOrders = ["asc", "desc"];
+  if (!validOrders.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid order query" });
+  }
+
   const { rows: articles } = await db.query(`
   SELECT 
   articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, COUNT(comments.comment_id)::int AS comment_count

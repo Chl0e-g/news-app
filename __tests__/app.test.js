@@ -331,6 +331,14 @@ describe("/api/articles", () => {
           expect(articles).toBeSortedBy("created_at", { ascending: true });
         });
     });
+    test("status: 400 - msg 'Invalid order query' for invalid order in query", () => {
+      return request(app)
+        .get("/api/articles?order=invalid-order_query")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid order query");
+        });
+    });
   });
 });
 
