@@ -363,6 +363,15 @@ describe("/api/articles", () => {
           expect(msg).toBe("Topic not found");
         });
     });
+    test("status: 200 - response is correct for multiple valid queries at once", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title&order=asc&topic=mitch")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toHaveLength(11);
+          expect(articles).toBeSortedBy("title", { ascending: true });
+        });
+    });
   });
 });
 
