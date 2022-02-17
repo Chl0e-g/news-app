@@ -1,7 +1,7 @@
 const {
   fetchArticleById,
   updateArticleVotes,
-  fetchArticles
+  fetchArticles,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -28,7 +28,8 @@ exports.patchArticleVotes = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles()
+  const { sort_by: sortBy } = req.query;
+  fetchArticles(sortBy)
     .then((articles) => {
       res.status(200).send({ articles });
     })

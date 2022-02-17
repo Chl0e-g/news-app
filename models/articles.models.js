@@ -1,7 +1,9 @@
 const db = require("../db/connection");
 
 exports.fetchArticleById = async (articleId) => {
-  const {rows: [article]} = await db.query(
+  const {
+    rows: [article],
+  } = await db.query(
     `
     SELECT articles.*, COUNT(comments.comment_id)::int AS comment_count
     FROM articles
@@ -55,14 +57,13 @@ exports.updateArticleVotes = async (articleId, incVotes) => {
   return updatedArticle;
 };
 
-exports.fetchArticles = async () => {
+exports.fetchArticles = async (sortBy = "created_at") => {
   const { rows: articles } = await db.query(`
   SELECT 
   articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, COUNT(comments.comment_id)::int AS comment_count
   FROM articles
   LEFT JOIN comments ON articles.article_id = comments.article_id
   GROUP BY articles.article_id
-  ORDER BY created_at DESC;`);
-  console.log(articles)
+  ORDER BY ${sortBy} DESC;`);
   return articles;
 };

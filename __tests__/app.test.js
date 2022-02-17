@@ -277,12 +277,44 @@ describe("/api/articles", () => {
           });
         });
     });
-    test("status: 200 - article objects in response are sorted by created_at date in descending order", () => {
+    test("status: 200 - article objects in response are sorted by created_at date in descending order by default", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then(({ body: { articles } }) => {
           expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    test("status: 200 - article objects in response are sorted by column specified in optional sort_by query (valid options: author, title, article_id, topic, created_at, votes) - default sort order desc", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("author", { descending: true });
+          return request(app).get("/api/articles?sort_by=title").expect(200);
+        })
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("title", { descending: true });
+          return request(app)
+            .get("/api/articles?sort_by=article_id")
+            .expect(200);
+        })
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("article_id", { descending: true });
+          return request(app).get("/api/articles?sort_by=topic").expect(200);
+        })
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("topic", { descending: true });
+          return request(app)
+            .get("/api/articles?sort_by=created_at")
+            .expect(200);
+        })
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+          return request(app).get("/api/articles?sort_by=votes").expect(200);
+        })
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("votes", { descending: true });
         });
     });
   });
