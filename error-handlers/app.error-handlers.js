@@ -22,6 +22,9 @@ exports.psqlErrors = (err, req, res, next) => {
       return res.status(404).send({ msg: "Username not found" });
     }
   }
+  if (err.code === "42703") {
+    return res.status(400).send({ msg: "Invalid sort_by query" });
+  }
   next(err);
 };
 

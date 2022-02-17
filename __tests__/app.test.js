@@ -281,7 +281,8 @@ describe("/api/articles", () => {
           expect(articles).toBeSortedBy("created_at", { descending: true });
         });
     });
-    test("status: 200 - article objects in response are sorted by column specified in optional sort_by query (valid options: author, title, article_id, topic, created_at, votes) - default sort order desc", () => {
+    test("status: 200 - article objects in response are sorted by valid columns specified in optional sort_by query - default order desc", () => {
+      //valid sort_by options: author, title, article_id, topic, created_at, votes
       return request(app)
         .get("/api/articles?sort_by=author")
         .expect(200)
@@ -311,6 +312,23 @@ describe("/api/articles", () => {
         })
         .then(({ body: { articles } }) => {
           expect(articles).toBeSortedBy("votes", { descending: true });
+        });
+    });
+    test("status: 400 - msg 'Invalid sort_by query' for invalid sort_by column in query", () => {
+      return request(app)
+      .get("/api/articles?sort_by=invalid-sort-query")
+      .expect(400)
+      .then(({body: {msg}})=>{
+        expect(msg).toBe("Invalid sort_by query")
+      })
+    })
+    test("status: 200 - article objects in response have sort order specified by optional order query - default order desc", () => {
+      //valid order options: asc, desc
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", { ascending: true });
         });
     });
   });

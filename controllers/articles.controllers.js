@@ -28,8 +28,8 @@ exports.patchArticleVotes = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by: sortBy } = req.query;
-  fetchArticles(sortBy)
+  const { sort_by: sortBy, order } = req.query;
+  fetchArticles(sortBy, order)
     .then((articles) => {
       res.status(200).send({ articles });
     })
