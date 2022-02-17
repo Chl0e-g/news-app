@@ -342,6 +342,7 @@ describe("/api/articles/:article_id/comments", () => {
           comments.forEach((comment) => {
             expect(comment).toEqual(
               expect.objectContaining({
+                article_id: expect.any(Number),
                 comment_id: expect.any(Number),
                 votes: expect.any(Number),
                 created_at: expect.any(String),
@@ -374,6 +375,80 @@ describe("/api/articles/:article_id/comments", () => {
         .expect(400)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Invalid article ID");
+        });
+    });
+  });
+  describe("POST", () => {
+    test("status: 200 - adds comment passed in request body to database for specified article_id", () => {
+      const reqBody = { username: "butter_bridge", body: "test body" };
+      const commentInDb = {
+        article_id: 2,
+        comment_id: 19,
+        votes: 0,
+        created_at: expect.any(String),
+        author: "butter_bridge",
+        body: "test body",
+      };
+
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(reqBody)
+        .expect(200)
+        .then(() => {
+          return request(app).get("/api/articles/2/comments").expect(200);
+        })
+        .then(
+          ({
+            body: {
+              comments: [comment],
+            },
+          }) => {
+            expect(comment).toEqual(commentInDb);
+          }
+        );
+    });
+    test("status: 200 - responds with a single object showing the posted comment", () => {
+      const reqBody = { username: "butter_bridge", body: "test body" };
+      const newComment = {
+        article_id: 2,
+        comment_id: 19,
+        votes: 0,
+        created_at: expect.any(String),
+        author: "butter_bridge",
+        body: "test body",
+      };
+
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(reqBody)
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(newComment);
+        });
+    });
+    test("status: 200 - additional data in request body is ignored", () => {
+      const reqBody = {
+        username: "butter_bridge",
+        body: "test body",
+        article_id: "superfluous data",
+        created_at: "superfluous data",
+        votes: 1000000,
+      };
+      const newComment = {
+        article_id: 2,
+        comment_id: 19,
+        votes: 0,
+        created_at: expect.any(String),
+        author: "butter_bridge",
+        body: "test body",
+      };
+
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(reqBody)
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(newComment);
         });
     });
   });

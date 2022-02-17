@@ -13,7 +13,7 @@ const {
   serverError,
 } = require("./error-handlers/app.error-handlers");
 const {
-  getCommentsByArticleId,
+  getCommentsByArticleId, postComment
 } = require("./controllers/comments.controllers");
 
 const app = express();
@@ -28,6 +28,7 @@ app.get("/api/articles", getArticles);
 app.get("/api/users", getUsers);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+app.post("/api/articles/:article_id/comments", postComment);
 
 //error handlers
 app.all("/*", invalidPath);
