@@ -25,11 +25,22 @@ exports.insertComment = async (articleId, author, body) => {
 };
 
 exports.removeComment = async (commentId) => {
-  await db.query(
+  //error handling: invalid commentId
+  if (!Number.isInteger(+commentId)) {
+    return Promise.reject({ status: 400, msg: "Invalid comment ID" });
+  }
+
+  const { rowCount } = await db.query(
     `
   DELETE FROM comments
   WHERE comment_id = $1;`,
     [commentId]
   );
+
+  //error handling: commentId not found
+  if (rowCount === 0) {
+    return Promise.reject({ status: 404, msg: "Comment ID not found" });
+  }
+
   return;
 };
