@@ -586,3 +586,44 @@ describe("/api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    test("status: 204 - specified comment is deleted from database", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(() => {
+          //test article that comment 1 belongs to has one fewer comment:
+          return request(app).get("/api/articles/9").expect(200);
+        })
+        .then(({ body: { article } }) => {
+          expect(article.comment_count).toBe(1);
+        });
+    });
+    test("status: 204 - response body is empty", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+    });
+    test("status 404 - msg 'Comment ID not found' for valid but non-existent comment ID", () => {
+      return request(app)
+        .delete("/api/comments/9999")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Comment ID not found");
+        });
+    });
+    test("status 400 - msg 'Invalid comment ID' for invalid comment ID", () => {
+      return request(app)
+        .delete("/api/comments/invalid-comment-id")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid comment ID");
+        });
+    });
+  });
+});
