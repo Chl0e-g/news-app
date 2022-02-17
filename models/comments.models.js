@@ -9,17 +9,3 @@ exports.fetchCommentsByArticleId = async (articleId) => {
   );
   return comments;
 };
-
-exports.insertComment = async (articleId, author, body) => {
-  const {
-    rows: [comment],
-  } = await db.query(
-    `
-  INSERT INTO comments
-  (article_id, author, body)
-  VALUES ($1, $2, $3)
-  RETURNING *;`,
-    [articleId, author, body]
-  );
-  return comment;
-};
