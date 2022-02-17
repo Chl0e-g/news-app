@@ -9,7 +9,7 @@ const { getUsers } = require("./controllers/users.controllers");
 const {
   invalidPath,
   customErrors,
-  invalidItemId,
+  psqlErrors,
   serverError,
 } = require("./error-handlers/app.error-handlers");
 const {
@@ -33,7 +33,7 @@ app.post("/api/articles/:article_id/comments", postComment);
 //error handlers
 app.all("/*", invalidPath);
 app.use(customErrors);
-app.use(invalidItemId);
+app.use(psqlErrors);
 app.use(serverError);
 
 module.exports = app;

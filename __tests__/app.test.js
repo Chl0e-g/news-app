@@ -451,5 +451,47 @@ describe("/api/articles/:article_id/comments", () => {
           expect(comment).toEqual(newComment);
         });
     });
+    test("status: 400 - msg 'Missing data in request body' for request without 'body' and/or 'username' keys in body", () => {
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Missing data in request body");
+        });
+    });
+    test("status: 404 - msg 'Username not found' for request with username not in database", () => {
+      const reqBody = { username: "non-existent user", body: "test body" };
+
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(reqBody)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Username not found");
+        });
+    });
+    test("status: 404 - msg 'Article ID not found' for valid but non-existent article_id", () => {
+      const reqBody = { username: "butter_bridge", body: "test body" };
+
+      return request(app)
+        .post("/api/articles/9999/comments")
+        .send(reqBody)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toEqual("Article ID not found");
+        });
+    });
+    test("status: 400 - msg 'Invalid article ID' for invalid article_id", () => {
+      const reqBody = { username: "butter_bridge", body: "test body" };
+
+      return request(app)
+        .post("/api/articles/invalid_id/comments")
+        .send(reqBody)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid article ID");
+        });
+    });
   });
 });
