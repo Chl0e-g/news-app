@@ -281,7 +281,7 @@ describe("/api/articles", () => {
           expect(articles).toBeSortedBy("created_at", { descending: true });
         });
     });
-    test("status: 200 - article objects in response are sorted by valid columns specified in optional sort_by query - default order desc", () => {
+    test("status: 200 - article objects in response are sorted by column specified in optional sort_by query - default order desc", () => {
       //valid sort_by options: author, title, article_id, topic, created_at, votes
       return request(app)
         .get("/api/articles?sort_by=author")
@@ -322,7 +322,7 @@ describe("/api/articles", () => {
           expect(msg).toBe("Invalid sort_by query");
         });
     });
-    test("status: 200 - article objects in response have sort order specified by optional order query - default order desc", () => {
+    test("status: 200 - article objects in response are sorted in order specified by optional order query", () => {
       //valid order options: asc, desc
       return request(app)
         .get("/api/articles?order=asc")
@@ -339,7 +339,7 @@ describe("/api/articles", () => {
           expect(msg).toBe("Invalid order query");
         });
     });
-    test("status: 200 - article objects in response are filtered by valid topic specified in optional topic query", () => {
+    test("status: 200 - article objects in response are filtered by topic specified in optional topic query", () => {
       return request(app)
         .get("/api/articles?topic=cats")
         .expect(200)
