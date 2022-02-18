@@ -33,5 +33,6 @@ This repo uses environment variables to connect to the test and development data
 | .env.development | PGDATABASE=<dev_database_name_here>  |
 
 ### Minimum version requirements
+NB: Earlier versions may work but haven't been tested.
 * Node.js v16.13.0
 * Postgres v14.1
