@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const fs = require("fs/promises");
 
 exports.checkArticleExists = async (articleId) => {
   const {
@@ -18,7 +19,7 @@ exports.checkArticleExists = async (articleId) => {
 
 exports.checkTopicExists = async (topic) => {
   if (!topic) return;
-  
+
   const {
     rows: [{ exists }],
   } = await db.query(
@@ -32,4 +33,9 @@ exports.checkTopicExists = async (topic) => {
   if (!exists) {
     return Promise.reject({ status: 404, msg: "Topic not found" });
   }
+};
+
+exports.fetchEndpoints = async () => {
+  const endpoints = await fs.readFile("./endpoints.json", "utf-8");
+  return endpoints;
 };
