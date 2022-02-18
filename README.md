@@ -1,4 +1,4 @@
-# News API
+# News Site API
 
 ## Project summary
 This project is an API which provides the backend service for a news site. The API interacts with a PostgreSQL database and enables CRUD functionality on articles, topics, users, and comments, as well as full error handling. 
@@ -21,8 +21,8 @@ https://chl0e-g-news-app.herokuapp.com/api
 3. Estabish the database connection following the instructions within 'Database connection setup' below
 4. Run `npm run seed` to seed the local database
 5. To run tests:
-    a. Run `npm test utils` to run unit tests for database utility functions
-    b. Run `npm test app` to run integration tests for app
+    * Run `npm test utils` to run unit tests for database utility functions
+    * Run `npm test app` to run integration tests for app
 
 ### Database connection setup
 This repo uses environment variables to connect to the test and development databases locally. After cloning this repo, create the following .env files in the root directory:
