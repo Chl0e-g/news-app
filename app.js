@@ -1,4 +1,5 @@
 const express = require("express");
+const {getEndpoints} = require("./controllers/utils.controllers")
 const { getTopics } = require("./controllers/topics.controllers");
 const {
   getArticleById,
@@ -14,11 +15,14 @@ const {
 } = require("./error-handlers/app.error-handlers");
 const {
   getCommentsByArticleId,
-  postComment, deleteComment
+  postComment,
+  deleteComment,
 } = require("./controllers/comments.controllers");
 
 const app = express();
 app.use(express.json());
+
+app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
 
