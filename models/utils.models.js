@@ -37,5 +37,5 @@ exports.checkTopicExists = async (topic) => {
 
 exports.fetchEndpoints = async () => {
   const endpoints = await fs.readFile("./endpoints.json", "utf-8");
-  return endpoints;
+  return JSON.parse(endpoints);
 };

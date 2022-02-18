@@ -635,7 +635,7 @@ describe("/api", () => {
         .get("/api")
         .expect(200)
         .then(({ body: { endpoints } }) => {
-          expect(JSON.parse(endpoints)).toEqual(
+          expect(endpoints).toEqual(
             expect.objectContaining({
               "GET /api": expect.any(Object),
               "GET /api/topics": expect.any(Object),
