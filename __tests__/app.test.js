@@ -414,6 +414,42 @@ describe("/api/users", () => {
   });
 });
 
+describe("/api/users/:username", () => {
+  describe("GET", () => {
+    test("status: 200 - responds with a single user object with matching username", () => {
+      return request(app)
+        .get("/api/users/butter_bridge")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(typeof user).toBe("object");
+          expect(user.username).toBe("butter_bridge");
+        });
+    });
+    test("status:200 - user object in response has these properties: username, avatar_url, name", () => {
+      const userData = {
+        username: "butter_bridge",
+        name: "jonny",
+        avatar_url:
+          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+      };
+      return request(app)
+        .get("/api/users/butter_bridge")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user).toEqual(userData);
+        });
+    });
+    test("status: 404 - msg 'User not found' for valid but non-existent username", () => {
+      return request(app)
+        .get("/api/users/non-existent-username")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("User not found");
+        });
+    });
+  });
+});
+
 describe("/api/articles/:article_id/comments", () => {
   describe("GET", () => {
     test("status: 200 - responds with an array of comment objects for the specified article_id", () => {

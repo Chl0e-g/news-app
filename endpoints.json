@@ -68,6 +68,17 @@
       "users": [{ "username": "chloe1234" }]
     }
   },
+  "GET /api/users/:username": {
+    "description": "serves the specified user",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "chloe1234",
+        "name": "Chloe",
+        "avatar_url": "www.image-url.co"
+      }
+    }
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of all comments for the specified article",
     "queries": [],

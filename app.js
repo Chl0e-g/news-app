@@ -1,12 +1,12 @@
 const express = require("express");
-const {getEndpoints} = require("./controllers/utils.controllers")
+const { getEndpoints } = require("./controllers/utils.controllers");
 const { getTopics } = require("./controllers/topics.controllers");
 const {
   getArticleById,
   patchArticleVotes,
   getArticles,
 } = require("./controllers/articles.controllers");
-const { getUsers } = require("./controllers/users.controllers");
+const { getUsers, getUserByUsername } = require("./controllers/users.controllers");
 const {
   invalidPath,
   customErrors,
@@ -30,6 +30,7 @@ app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticleVotes);
 app.get("/api/articles", getArticles);
 
+app.get("/api/users/:username", getUserByUsername);
 app.get("/api/users", getUsers);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
