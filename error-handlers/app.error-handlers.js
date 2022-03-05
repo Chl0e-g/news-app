@@ -9,7 +9,12 @@ exports.customErrors = (err, req, res, next) => {
 
 exports.psqlErrors = (err, req, res, next) => {
   if (err.code === "22P02") {
-    return res.status(400).send({ msg: "Invalid article ID" });
+    if (req.path.search(/\/api\/articles\//) !== -1) {
+      return res.status(400).send({ msg: "Invalid article ID" });
+    }
+    if (req.path.search(/\/api\/comments\//) !== -1) {
+      return res.status(400).send({ msg: "Invalid comment ID" });
+    }
   }
   if (err.code === "23502") {
     return res.status(400).send({ msg: "Missing data in request body" });

@@ -6,7 +6,10 @@ const {
   patchArticleVotes,
   getArticles,
 } = require("./controllers/articles.controllers");
-const { getUsers, getUserByUsername } = require("./controllers/users.controllers");
+const {
+  getUsers,
+  getUserByUsername,
+} = require("./controllers/users.controllers");
 const {
   invalidPath,
   customErrors,
@@ -17,6 +20,7 @@ const {
   getCommentsByArticleId,
   postComment,
   deleteComment,
+  patchCommentVotes,
 } = require("./controllers/comments.controllers");
 
 const app = express();
@@ -36,6 +40,7 @@ app.get("/api/users", getUsers);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postComment);
 app.delete("/api/comments/:comment_id", deleteComment);
+app.patch("/api/comments/:comment_id", patchCommentVotes);
 
 //error handlers
 app.all("/*", invalidPath);

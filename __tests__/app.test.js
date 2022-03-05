@@ -662,6 +662,100 @@ describe("/api/comments/:comment_id", () => {
         });
     });
   });
+  describe("PATCH", () => {
+    test("status: 200 - increments votes for specified comment in database by positive integer passed in request body", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 10 })
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment.votes).toBe(26);
+        });
+    });
+    test("status: 200 - decrements votes for specified comment in database by negative integer passed in request body", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: -10 })
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment.votes).toBe(6);
+        });
+    });
+    test("status: 200 - responds with a single object showing the updated comment", () => {
+      const comment1Updated = {
+        comment_id: 1,
+        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        votes: 26,
+        author: "butter_bridge",
+        article_id: 9,
+        created_at: expect.any(String),
+      };
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 10 })
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(comment1Updated);
+        });
+    });
+    test("status: 200 - additional data in request body is ignored", () => {
+      const comment1Updated = {
+        comment_id: 1,
+        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        votes: 26,
+        author: "butter_bridge",
+        article_id: 9,
+        created_at: expect.any(String),
+      };
+      return request(app)
+        .patch("/api/comments/1")
+        .send({
+          inc_votes: 10,
+          superfluousData: "Test data",
+          comment_id: "superfluous data",
+        })
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(comment1Updated);
+        });
+    });
+    test("status: 400 - msg 'Missing inc_votes data in request body' for request without inc_votes key in body", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Missing inc_votes data in request body");
+        });
+    });
+    test("status: 400 - msg 'Invalid inc_votes data in request body' for request with invalid inc_votes data type", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: "invalid data" })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid inc_votes data in request body");
+        });
+    });
+    test("status: 404 - msg 'Comment ID not found' for valid but non-existent comment_id", () => {
+      return request(app)
+        .patch("/api/comments/999999")
+        .send({ inc_votes: 10 })
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Comment ID not found");
+        });
+    });
+    test("status: 400 - msg 'Invalid comment ID' for invalid comment_id", () => {
+      return request(app)
+        .patch("/api/comments/invalid_id")
+        .send({ inc_votes: 10 })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid comment ID");
+        });
+    });
+  });
 });
 
 describe("/api", () => {

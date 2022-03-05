@@ -116,5 +116,22 @@
     "description": "deletes specified comment and serves no response",
     "queries": [],
     "exampleResponse": {}
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "increments/decrements votes for specified comment and serves the updated comment",
+    "queries": [],
+    "exampleRequest": {
+      "body": { "inc_votes": 1 }
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "author": "chloe1234",
+        "body": "Text from the comment...",
+        "created_at": 1527695953341,
+        "votes": 2,
+        "article_id": 1
+      }
+    }
   }
 }
