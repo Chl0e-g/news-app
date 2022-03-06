@@ -499,6 +499,43 @@ describe("/api/articles", () => {
         });
     });
   });
+  describe("DELETE", () => {
+    test("status: 204 - specified article is deleted from database", () => {
+      return request(app)
+        .delete("/api/articles/1")
+        .expect(204)
+        .then(() => {
+          return request(app).get("/api/articles/1").expect(404);
+        })
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Article ID not found");
+        });
+    });
+    test("status: 204 - response body is empty", () => {
+      return request(app)
+        .delete("/api/articles/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+    });
+    test("status 404 - msg 'Article ID not found' for valid but non-existent article ID", () => {
+      return request(app)
+        .delete("/api/articles/9999")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Article ID not found");
+        });
+    });
+    test("status 400 - msg 'Invalid article ID' for invalid article ID", () => {
+      return request(app)
+        .delete("/api/articles/invalid-article-id")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid article ID");
+        });
+    });
+  });
 });
 
 describe("/api/users", () => {

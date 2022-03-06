@@ -2,7 +2,7 @@ const {
   fetchArticleById,
   updateArticleVotes,
   fetchArticles,
-  insertArticle,
+  insertArticle, removeArticle
 } = require("../models/articles.models");
 const { checkTopicExists } = require("../models/utils.models");
 
@@ -46,6 +46,18 @@ exports.postArticle = (req, res, next) => {
   insertArticle(author, title, body, topic)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteArticle = (req, res, next) => {
+  const { article_id: articleId } = req.params;
+
+  removeArticle(articleId)
+    .then(() => {
+      res.sendStatus(204);
     })
     .catch((err) => {
       next(err);

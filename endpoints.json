@@ -85,6 +85,11 @@
       }
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes specified article and its associated comments and serves no response",
+    "queries": [],
+    "exampleResponse": {}
+  },
   "GET /api/users": {
     "description": "serves an array of all users",
     "queries": [],

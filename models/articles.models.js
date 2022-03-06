@@ -118,3 +118,24 @@ exports.insertArticle = async (author, title, body, topic) => {
 
   return article;
 };
+
+exports.removeArticle = async (articleId) => {
+  //error handling: invalid articleId
+  if (!Number.isInteger(+articleId)) {
+    return Promise.reject({ status: 400, msg: "Invalid article ID" });
+  }
+
+  const { rowCount } = await db.query(
+    `
+  DELETE FROM articles
+  WHERE article_id = $1;`,
+    [articleId]
+  );
+
+  //error handling: articleId not found
+  if (rowCount === 0) {
+    return Promise.reject({ status: 404, msg: "Article ID not found" });
+  }
+
+  return;
+};
