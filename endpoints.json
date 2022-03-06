@@ -61,6 +61,30 @@
       }
     }
   },
+  "POST /api/articles": {
+    "description": "adds article to database and serves added article",
+    "queries": [],
+    "exampleRequest": {
+      "body": {
+        "author": "chloe1234",
+        "title": "Article title",
+        "body": "Text from the comment...",
+        "topic": "football"
+      }
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Seafood substitutions are increasing",
+        "topic": "cooking",
+        "author": "chloe1234",
+        "body": "Text from the article...",
+        "created_at": 1527695953341,
+        "votes": 1,
+        "comment_count": 0
+      }
+    }
+  },
   "GET /api/users": {
     "description": "serves an array of all users",
     "queries": [],

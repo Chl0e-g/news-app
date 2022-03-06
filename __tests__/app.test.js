@@ -373,6 +373,132 @@ describe("/api/articles", () => {
         });
     });
   });
+  describe("POST", () => {
+    test("status: 200 - adds article passed in request body to database", () => {
+      const reqBody = {
+        author: "butter_bridge",
+        title: "test title",
+        body: "test body",
+        topic: "paper",
+      };
+      const articleInDb = {
+        article_id: 13,
+        votes: 0,
+        created_at: expect.any(String),
+        comment_count: 0,
+        author: "butter_bridge",
+        title: "test title",
+        body: "test body",
+        topic: "paper",
+      };
+
+      return request(app)
+        .post("/api/articles")
+        .send(reqBody)
+        .expect(200)
+        .then(() => {
+          return request(app).get("/api/articles/13").expect(200);
+        })
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(articleInDb);
+        });
+    });
+    test("status: 200 - responds with a single object showing the posted article", () => {
+      const reqBody = {
+        author: "butter_bridge",
+        title: "test title",
+        body: "test body",
+        topic: "paper",
+      };
+      const newArticle = {
+        article_id: 13,
+        votes: 0,
+        created_at: expect.any(String),
+        comment_count: 0,
+        author: "butter_bridge",
+        title: "test title",
+        body: "test body",
+        topic: "paper",
+      };
+
+      return request(app)
+        .post("/api/articles")
+        .send(reqBody)
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(newArticle);
+        });
+    });
+    test("status: 200 - superfluous data in request body is ignored", () => {
+      const reqBody = {
+        author: "butter_bridge",
+        title: "test title",
+        body: "test body",
+        topic: "paper",
+        comment_count: "superfluous data",
+        votes: "superfluous data",
+      };
+      const newArticle = {
+        article_id: 13,
+        votes: 0,
+        created_at: expect.any(String),
+        comment_count: 0,
+        author: "butter_bridge",
+        title: "test title",
+        body: "test body",
+        topic: "paper",
+      };
+
+      return request(app)
+        .post("/api/articles")
+        .send(reqBody)
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(newArticle);
+        });
+    });
+    test("status: 400 - msg 'Missing data in request body' for request without author/title/body/topic keys in body", () => {
+      return request(app)
+        .post("/api/articles")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Missing data in request body");
+        });
+    });
+    test("status: 404 - msg 'Username not found' for request with author not in database", () => {
+      const reqBody = {
+        author: "non-existent user",
+        title: "test title",
+        body: "test body",
+        topic: "paper",
+      };
+
+      return request(app)
+        .post("/api/articles")
+        .send(reqBody)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Username not found");
+        });
+    });
+    test("status: 404 - msg 'Topic not found' for request with topic not in database", () => {
+      const reqBody = {
+        author: "butter-bridge",
+        title: "test title",
+        body: "test body",
+        topic: "non-existent topic",
+      };
+
+      return request(app)
+        .post("/api/articles")
+        .send(reqBody)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Topic not found");
+        });
+    });
+  });
 });
 
 describe("/api/users", () => {

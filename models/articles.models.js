@@ -102,3 +102,19 @@ exports.fetchArticles = async (
   );
   return articles;
 };
+
+exports.insertArticle = async (author, title, body, topic) => {
+  const {
+    rows: [article],
+  } = await db.query(
+    `
+  INSERT INTO articles
+  (author, title, body, topic)
+  VALUES ($1, $2, $3, $4)
+  RETURNING *;`,
+    [author, title, body, topic]
+  );
+  article.comment_count = 0;
+
+  return article;
+};

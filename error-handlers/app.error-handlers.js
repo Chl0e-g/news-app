@@ -26,6 +26,9 @@ exports.psqlErrors = (err, req, res, next) => {
     if (err.detail.search(/author/) !== -1) {
       return res.status(404).send({ msg: "Username not found" });
     }
+    if (err.detail.search(/topic/) !== -1) {
+      return res.status(404).send({ msg: "Topic not found" });
+    }
   }
   next(err);
 };
