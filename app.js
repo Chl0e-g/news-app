@@ -4,7 +4,9 @@ const { getTopics } = require("./controllers/topics.controllers");
 const {
   getArticleById,
   patchArticleVotes,
-  getArticles, postArticle, deleteArticle
+  getArticles,
+  postArticle,
+  deleteArticle,
 } = require("./controllers/articles.controllers");
 const {
   getUsers,
@@ -22,9 +24,12 @@ const {
   deleteComment,
   patchCommentVotes,
 } = require("./controllers/comments.controllers");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
+
+app.use(cors());
 
 app.get("/api", getEndpoints);
 
@@ -34,7 +39,7 @@ app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticleVotes);
 app.get("/api/articles", getArticles);
 app.post("/api/articles", postArticle);
-app.delete("/api/articles/:article_id", deleteArticle)
+app.delete("/api/articles/:article_id", deleteArticle);
 
 app.get("/api/users/:username", getUserByUsername);
 app.get("/api/users", getUsers);
