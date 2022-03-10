@@ -70,6 +70,7 @@ exports.fetchArticles = async (
     "topic",
     "created_at",
     "votes",
+    "comment_count"
   ];
   if (!validSortByColumns.includes(sortBy)) {
     return Promise.reject({ status: 400, msg: "Invalid sort_by query" });
